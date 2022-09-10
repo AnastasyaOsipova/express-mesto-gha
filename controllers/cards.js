@@ -1,4 +1,4 @@
-const User = require("../models/user");
+const Card = require("../models/card");
 
 class ValidationError extends Error {
   constructor(message) {
@@ -30,9 +30,29 @@ class ServerError extends Error {
 
 const SERVER_ERROR = 500;
 
-module.exports.getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.send({ data: users }))
+module.exports.createCard = (req, res) => {
+  const { name, link } = req.body;
+  const owner = req.user._id;
+  console.log(owner);
+  Card.create({ name, link, owner })
+    .then((card) => res.send({ data: card }))
+    .catch((err) => {
+      if (err.name === ValidationError) {
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Переданы некорректные данные" });
+      } else err.name === ServerError;
+      {
+        return res
+          .status(SERVER_ERROR)
+          .send({ message: "Произошла неизвестная ошибка" });
+      }
+    });
+};
+
+module.exports.getCards = (req, res) => {
+  Card.find({})
+    .then((cards) => res.send({ data: cards }))
     .catch(() => {
       if (err.name === ServerError) {
         return res
@@ -42,15 +62,12 @@ module.exports.getUsers = (req, res) => {
     });
 };
 
-module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
-    .then((user) => res.send({ data: user }))
+module.exports.deleteCard = (req, res) => {
+  Card.findByIdAndRemove(req.params.cardId)
+    .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.name === ValidationError) {
-        return res
-          .status(BAD_REQUEST)
-          .send({ message: "Переданы некорректные данные" });
+      if (err.name === PageNotFoundError) {
+        return res.status(NOT_FOUND).send({ message: "Карточка не найдена" });
       } else err.name === ServerError;
       {
         return res
@@ -60,14 +77,21 @@ module.exports.createUser = (req, res) => {
     });
 };
 
-module.exports.getUserById = (req, res) => {
-  User.findOne({ userId: req.params.id })
-    .then((user) => res.send({ data: user }))
+module.exports.likeCard = (req, res) => {
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true }
+  )
+    .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.name === PageNotFoundError) {
+      if (err.name === ValidationError) {
         return res
-          .status(NOT_FOUND)
-          .send({ message: "Пользователь не найден" });
+          .status(BAD_REQUEST)
+          .send({ message: "Переданы некорректные данные" });
+      }
+      if (err.name === PageNotFoundError) {
+        return res.status(NOT_FOUND).send({ message: "Карточка не найдена" });
       } else err.name === ServerError;
       {
         return res
@@ -77,10 +101,13 @@ module.exports.getUserById = (req, res) => {
     });
 };
 
-module.exports.updateUserProfile = (req, res) => {
-  const { name, about } = req.body;
-  User.findByIdAndUpdate({ _id: req.user._id }, { name, about })
-    .then((user) => res.send({ data: user }))
+module.exports.dislikeCard = (req, res) => {
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $pull: { likes: req.user._id } },
+    { new: true }
+  )
+    .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === ValidationError) {
         return res
@@ -88,32 +115,7 @@ module.exports.updateUserProfile = (req, res) => {
           .send({ message: "Переданы некорректные данные" });
       }
       if (err.name === PageNotFoundError) {
-        return res
-          .status(NOT_FOUND)
-          .send({ message: "Пользователь не найден" });
-      } else err.name === ServerError;
-      {
-        return res
-          .status(SERVER_ERROR)
-          .send({ message: "Произошла неизвестная ошибка" });
-      }
-    });
-};
-
-module.exports.updateUserAvatar = (req, res) => {
-  const { avatar } = req.body;
-  User.findByIdAndUpdate({ _id: req.user._id }, { avatar })
-    .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      if (err.name === ValidationError) {
-        return res
-          .status(BAD_REQUEST)
-          .send({ message: "Переданы некорректные данные" });
-      }
-      if (err.name === PageNotFoundError) {
-        return res
-          .status(NOT_FOUND)
-          .send({ message: "Пользователь не найден" });
+        return res.status(NOT_FOUND).send({ message: "Карточка не найдена" });
       } else err.name === ServerError;
       {
         return res
