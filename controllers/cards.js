@@ -39,9 +39,6 @@ module.exports.deleteCard = (req, res) => {
     .catch((err) => {
       if (res.status(NOT_FOUND)) {
         return res.send({ message: "Карточка не найдена" });
-      }
-      if (res.status(BAD_REQUEST)) {
-        return res.send({ message: "Переданы некорректные данные" });
       } else {
         return res
           .status(SERVER_ERROR)
@@ -54,15 +51,12 @@ module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
-    { new: true }
+    { new: true, runValidators: true }
   )
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (res.status(NOT_FOUND)) {
         return res.send({ message: "Карточка не найдена" });
-      }
-      if (res.status(BAD_REQUEST)) {
-        return res.send({ message: "Переданы некорректные данные" });
       } else {
         return res
           .status(SERVER_ERROR)
@@ -75,15 +69,12 @@ module.exports.dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
-    { new: true }
+    { new: true, runValidators: true }
   )
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (res.status(NOT_FOUND)) {
         return res.send({ message: "Карточка не найдена" });
-      }
-      if (res.status(BAD_REQUEST)) {
-        return res.send({ message: "Переданы некорректные данные" });
       } else {
         return res
           .status(SERVER_ERROR)
