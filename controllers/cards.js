@@ -38,6 +38,9 @@ module.exports.deleteCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (res.status(BAD_REQUEST)) {
+        return res.send({ message: "Неверный id карточки" });
+      }
+      if (res.status(NOT_FOUND)) {
         return res.send({ message: "Карточка не найдена" });
       } else {
         return res
