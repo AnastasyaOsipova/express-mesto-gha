@@ -32,7 +32,7 @@ module.exports.createUser = (req, res) => {
 };
 
 module.exports.getUserById = (req, res) => {
-  User.findOne({ userId: req.params.id })
+  User.findOne(req.params.userId )
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (res.status(NOT_FOUND)) {
