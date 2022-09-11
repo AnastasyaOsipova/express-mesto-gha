@@ -55,7 +55,7 @@ module.exports.likeCard = (req, res) => {
   )
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (res.status(NOT_FOUND)) {
+      if (res.status(BAD_REQUEST)) {
         return res.send({ message: "Карточка не найдена" });
       } else {
         return res
@@ -73,7 +73,7 @@ module.exports.dislikeCard = (req, res) => {
   )
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (res.status(NOT_FOUND)) {
+      if (res.status(BAD_REQUEST)) {
         return res.send({ message: "Карточка не найдена" });
       } else {
         return res

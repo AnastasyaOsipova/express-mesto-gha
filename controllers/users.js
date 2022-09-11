@@ -37,9 +37,9 @@ module.exports.getUserById = (req, res) => {
     .catch((err) => {
       if (res.status(BAD_REQUEST)) {
         return res.send({ message: "Переданы некорректные данные" });
-        if (res.status(NOT_FOUND)) {
-          return res.send({ message: "Пользователь не найден" });
-        }
+      }
+      if (res.status(NOT_FOUND)) {
+        return res.send({ message: "Пользователь не найден" });
       } else {
         return res
           .status(SERVER_ERROR)
