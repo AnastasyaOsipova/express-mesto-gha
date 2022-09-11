@@ -32,11 +32,14 @@ module.exports.createUser = (req, res) => {
 };
 
 module.exports.getUserById = (req, res) => {
-  User.findOne(req.params.userId )
+  User.findOne(req.params.userId)
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (res.status(NOT_FOUND)) {
         return res.send({ message: "Пользователь не найден" });
+      }
+      if (res.status(BAD_REQUEST)) {
+        return res.send({ message: "Переданы некорректные данные" });
       } else {
         return res
           .status(SERVER_ERROR)
@@ -47,7 +50,15 @@ module.exports.getUserById = (req, res) => {
 
 module.exports.updateUserProfile = (req, res) => {
   const { name, about } = req.body;
-  User.findByIdAndUpdate({ _id: req.user._id }, { name, about })
+  User.findByIdAndUpdate(
+    { _id: req.user._id },
+    { name, about },
+    {
+      new: true,
+      runValidators: true,
+      upsert: true,
+    }
+  )
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (res.status(BAD_REQUEST)) {
