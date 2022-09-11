@@ -76,7 +76,15 @@ module.exports.updateUserProfile = (req, res) => {
 
 module.exports.updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
-  User.findByIdAndUpdate({ _id: req.user._id }, { avatar })
+  User.findByIdAndUpdate(
+    { _id: req.user._id },
+    { avatar },
+    {
+      new: true,
+      runValidators: true,
+      upsert: true,
+    }
+  )
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (res.status(BAD_REQUEST)) {
