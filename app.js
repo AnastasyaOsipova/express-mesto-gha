@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const userRoutes = require("./routes/users");
 const cardsRoutes = require("./routes/cards");
 const bodyParser = require("body-parser");
-const router = require("express").Router();
 const { PORT = 3000 } = process.env;
 
 const app = express();
@@ -25,8 +24,8 @@ app.use("/users", userRoutes);
 
 app.use("/cards", cardsRoutes);
 
-router.use((req, res) => {
-  res.status(404).send({ message: "Страница не найдена" });
+app.use((req, res) => {
+  res.status(404).send({ message: 'Страница не найдена' });
 });
 
 app.listen(PORT, () => {
