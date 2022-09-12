@@ -35,6 +35,9 @@ module.exports.getCards = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
+    .orFail(() => {
+      return res.status(NOT_FOUND).send({ message: "Карточки не существует" });
+    })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (res.status(BAD_REQUEST)) {
@@ -56,6 +59,9 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true }
   )
+    .orFail(() => {
+      return res.status(NOT_FOUND).send({ message: "Карточки не существует" });
+    })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (res.status(BAD_REQUEST)) {
@@ -74,6 +80,9 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true }
   )
+    .orFail(() => {
+      return res.status(NOT_FOUND).send({ message: "Карточки не существует" });
+    })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (res.status(BAD_REQUEST)) {

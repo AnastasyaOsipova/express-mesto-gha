@@ -33,13 +33,13 @@ module.exports.createUser = (req, res) => {
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
+    .orFail(() => {
+      return res.status(NOT_FOUND).send({ message: "Пользователя не существует" });
+    })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (res.status(BAD_REQUEST)) {
         return res.send({ message: "Переданы некорректные данные" });
-      }
-      if (res.status(NOT_FOUND)) {
-        return res.send({ message: "Пользователь не найден" });
       } else {
         return res
           .status(SERVER_ERROR)
