@@ -1,4 +1,5 @@
-const Card = require("../models/card");
+/* eslint-disable no-else-return */
+const Card = require('../models/card');
 
 const BAD_REQUEST = 400;
 
@@ -9,18 +10,17 @@ const SERVER_ERROR = 500;
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   const owner = req.user._id;
-  console.log(owner);
   Card.create({ name, link, owner })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.name === "ValidationError") {
+      if (err.name === 'ValidationError') {
         return res
           .status(BAD_REQUEST)
-          .send({ message: "Переданы некорректные данные" });
+          .send({ message: 'Переданы некорректные данные' });
       } else {
         return res
           .status(SERVER_ERROR)
-          .send({ message: "Произошла неизвестная ошибка" });
+          .send({ message: 'Произошла неизвестная ошибка' });
       }
     });
 };
@@ -31,26 +31,27 @@ module.exports.getCards = (req, res) => {
     .catch(() => {
       res
         .status(SERVER_ERROR)
-        .send({ message: "Произошла неизвестная ошибка" });
+        .send({ message: 'Произошла неизвестная ошибка' });
     });
 };
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .orFail(() => {
-      throw new Error("NotFound");
+      throw new Error('NotFound');
     })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: "Невалидный id" });
+      if (err.name === 'CastError') {
+        return res.status(BAD_REQUEST).send({ message: 'Невалидный id' });
       }
-      if (err.message === "NotFound") {
-        return res.status(NOT_FOUND).send({ message: "Карточка не найдена" });
+      if (err.message === 'NotFound') {
+        return res.status(NOT_FOUND).send({ message: 'Карточка не найдена' });
+      // eslint-disable-next-line no-else-return
       } else {
         return res
           .status(SERVER_ERROR)
-          .send({ message: "Произошла неизвестная ошибка" });
+          .send({ message: 'Произошла неизвестная ошибка' });
       }
     });
 };
@@ -59,22 +60,23 @@ module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
-    { new: true }
+    { new: true },
   )
     .orFail(() => {
-      throw new Error("NotFound");
+      throw new Error('NotFound');
     })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: "Невалидный id" });
+      if (err.name === 'CastError') {
+        return res.status(BAD_REQUEST).send({ message: 'Невалидный id' });
       }
-      if (err.message === "NotFound") {
-        return res.status(NOT_FOUND).send({ message: "Карточка не найдена" });
+      if (err.message === 'NotFound') {
+        return res.status(NOT_FOUND).send({ message: 'Карточка не найдена' });
+      // eslint-disable-next-line no-else-return
       } else {
         return res
           .status(SERVER_ERROR)
-          .send({ message: "Произошла неизвестная ошибка" });
+          .send({ message: 'Произошла неизвестная ошибка' });
       }
     });
 };
@@ -83,22 +85,23 @@ module.exports.dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
-    { new: true }
+    { new: true },
   )
     .orFail(() => {
-      throw new Error("NotFound");
+      throw new Error('NotFound');
     })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: "Невалидный id" });
+      if (err.name === 'CastError') {
+        return res.status(BAD_REQUEST).send({ message: 'Невалидный id' });
       }
-      if (err.message === "NotFound") {
-        return res.status(NOT_FOUND).send({ message: "Карточка не найдена" });
+      if (err.message === 'NotFound') {
+        return res.status(NOT_FOUND).send({ message: 'Карточка не найдена' });
+      // eslint-disable-next-line no-else-return
       } else {
         return res
           .status(SERVER_ERROR)
-          .send({ message: "Произошла неизвестная ошибка" });
+          .send({ message: 'Произошла неизвестная ошибка' });
       }
     });
 };
