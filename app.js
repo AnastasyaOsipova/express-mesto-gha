@@ -3,6 +3,11 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const userRoutes = require('./routes/users');
 const cardsRoutes = require('./routes/cards');
+const {
+  createUser,
+  login,
+} = require('./controllers/users');
+const auth = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
 
@@ -13,20 +18,29 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '630e588699835b1199121785',
-  };
+app.post('/signin', login);
 
-  next();
-});
+app.post('/signup', createUser);
 
-app.use('/users', userRoutes);
+app.use('/users', auth, userRoutes);
 
-app.use('/cards', cardsRoutes);
+app.use('/cards', auth, cardsRoutes);
 
 app.use((req, res) => {
   res.status(404).send({ message: 'Страница не найдена' });
+});
+
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+
+  res
+    .status(statusCode)
+    .send({
+      message: statusCode === 500
+        ? 'На сервере произошла ошибка'
+        : message,
+    });
+  next();
 });
 
 app.listen(PORT, () => {
