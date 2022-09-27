@@ -47,13 +47,13 @@ module.exports.login = (req, res, next) => {
   User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Неправильные почта или пароль');
+        next(new NotFoundError('Неправильные почта или пароль'));
       }
       const token = jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' });
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            throw new NotFoundError('Неправильные почта или пароль');
+            next(new NotFoundError('Неправильные почта или пароль'));
           }
 
           return res.status(200).send({ token });
