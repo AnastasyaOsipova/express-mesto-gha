@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const {  celebrate, Joi, errors } = require('celebrate');
+const { celebrate, Joi, errors } = require('celebrate');
 const userRoutes = require('./routes/users');
 const cardsRoutes = require('./routes/cards');
 const {
@@ -32,6 +32,7 @@ app.post('/signup', celebrate({
     password: Joi.string().required().min(8),
     name: Joi.string().required().min(2).max(30),
     about: Joi.string().required().min(2),
+    avatar: Joi.string().required().min(2),
   }),
 }), createUser);
 
