@@ -3,9 +3,6 @@ const validator = require('validator');
 
 validator.isEmail('foo@bar.com');
 
-// eslint-disable-next-line no-useless-escape
-const validation = /^(https?:\/\/)(www.)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w\.-]*)*\/?$/i;
-
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -22,7 +19,6 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
-    match: validation,
   },
   email: {
     type: String,
