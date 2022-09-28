@@ -10,11 +10,17 @@ const {
 
 } = require('../controllers/users');
 
+const { authRegex } = require('../utils.js/constants');
+
 userRouter.get('/', getUsers);
 
 userRouter.get('/me', getUserInfo);
 
-userRouter.get('/:userId', getUserById);
+userRouter.get('/:userId', celebrate({
+  params: Joi.object().keys({
+    userId: Joi.string().alphanum().length(24),
+  }),
+}), getUserById);
 
 userRouter.patch('/me', celebrate({
   body: Joi.object().keys({
@@ -25,7 +31,7 @@ userRouter.patch('/me', celebrate({
 
 userRouter.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().required().min(2),
+    avatar: Joi.string().required().regex(authRegex),
   }),
 }), updateUserAvatar);
 

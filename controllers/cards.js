@@ -33,7 +33,7 @@ module.exports.deleteCard = (req, res, next) => {
         card.remove();
         res.status(200).send({ data: card });
       } else {
-        throw new UnauthorizedError('Вы не можете удалить эту карточку');
+        next(new UnauthorizedError('Вы не можете удалить эту карточку'));
       }
     })
     .catch((err) => {
