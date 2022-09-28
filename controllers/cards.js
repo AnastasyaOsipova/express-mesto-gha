@@ -1,8 +1,8 @@
 /* eslint-disable no-else-return */
 const Card = require('../models/card');
 const NotFoundError = require('../errors/not-found-err');
-const UnauthorizedError = require('../errors/unauthorized-err');
 const ValidationError = require('../errors/validation-err');
+const ForbiddenError = require('../errors/forbidden-err');
 
 module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
@@ -33,7 +33,7 @@ module.exports.deleteCard = (req, res, next) => {
         card.remove();
         res.status(200).send({ data: card });
       } else {
-        next(new UnauthorizedError('Вы не можете удалить эту карточку'));
+        next(new ForbiddenError('Вы не можете удалить эту карточку'));
       }
     })
     .catch((err) => {
