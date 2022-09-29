@@ -1,4 +1,9 @@
 const mongoose = require('mongoose');
+const { authRegex } = require('../utils.js/constants');
+
+function validateUrl(v) {
+  return authRegex.test(v);
+}
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -10,6 +15,7 @@ const cardSchema = new mongoose.Schema({
   link: {
     type: String,
     required: true,
+    validate: { validator: validateUrl },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
@@ -18,6 +24,7 @@ const cardSchema = new mongoose.Schema({
   },
   likes: {
     type: [mongoose.Schema.Types.ObjectId],
+    ref: 'user',
     default: [],
   },
   createdAt: {
