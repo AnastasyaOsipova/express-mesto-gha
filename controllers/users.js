@@ -33,10 +33,10 @@ module.exports.createUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new ValidationError('Переданы некорректные данные'));
+        return next(new ValidationError('Переданы некорректные данные'));
       }
       if (err.code === 11000) {
-        next(new ConflictError('Пользователь уже существует'));
+        return next(new ConflictError('Пользователь уже существует'));
       } else {
         next(err);
       }
@@ -74,10 +74,10 @@ module.exports.getUserById = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new ValidationError('Невалидный id'));
+        return next(new ValidationError('Невалидный id'));
       }
       if (err.message === 'NotFound') {
-        next(new NotFoundError('Пользователь не найден'));
+        return next(new NotFoundError('Пользователь не найден'));
       } else {
         next(err);
       }
@@ -92,10 +92,10 @@ module.exports.getUserInfo = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new ValidationError('Невалидный id'));
+        return next(new ValidationError('Невалидный id'));
       }
       if (err.message === 'NotFound') {
-        next(new NotFoundError('Пользователь не найден'));
+        return next(new NotFoundError('Пользователь не найден'));
       } else {
         next(err);
       }
@@ -118,10 +118,10 @@ module.exports.updateUserProfile = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new ValidationError('Переданы некорректные данные'));
+        return next(new ValidationError('Переданы некорректные данные'));
       }
       if (err.message === 'NotFound') {
-        throw new NotFoundError('Пользователь не найден');
+        return next(new NotFoundError('Пользователь не найден'));
       } else {
         next(err);
       }
@@ -144,10 +144,10 @@ module.exports.updateUserAvatar = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new ValidationError('Переданы некорректные данные'));
+        return next(new ValidationError('Переданы некорректные данные'));
       }
       if (err.message === 'NotFound') {
-        next(new NotFoundError('Пользователь не найден'));
+        return next(new NotFoundError('Пользователь не найден'));
       } else {
         next(err);
       }

@@ -10,7 +10,7 @@ const {
 } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const { authRegex } = require('./utils.js/constants');
-const ValidationError = require('./errors/validation-err');
+const NotFoundError = require('./errors/not-found-err');
 
 const { PORT = 3000 } = process.env;
 
@@ -45,7 +45,7 @@ app.use('/cards', auth, cardsRoutes);
 app.use(errors());
 
 app.use((req, res, next) => {
-  next(new ValidationError('Страница не найдена'));
+  next(new NotFoundError('Страница не найдена'));
 });
 
 app.use((err, req, res, next) => {

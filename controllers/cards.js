@@ -32,19 +32,19 @@ module.exports.deleteCard = (req, res, next) => {
     .then((card) => {
       if (card.owner.toString() === req.user._id.toString()) {
         card.remove();
-        res.status(200).send({ data: card });
+        return res.status(200).send({ data: card });
       } else {
-        next(new ForbiddenError('Вы не можете удалить эту карточку'));
+        return next(new ForbiddenError('Вы не можете удалить эту карточку'));
       }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new ValidationError('Невалидный id'));
+        return next(new ValidationError('Невалидный id'));
       }
       if (err.message === 'NotFound') {
-        next(new NotFoundError('Карточка не найдена'));
+        return next(new NotFoundError('Карточка не найдена'));
       } else {
-        next(err);
+        return next(err);
       }
     });
 };
@@ -61,12 +61,12 @@ module.exports.likeCard = (req, res, next) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new ValidationError('Невалидный id'));
+        return next(new ValidationError('Невалидный id'));
       }
       if (err.message === 'NotFound') {
-        next(new NotFoundError('Карточка не найдена'));
+        return next(new NotFoundError('Карточка не найдена'));
       } else {
-        next(err);
+        return next(err);
       }
     });
 };
@@ -83,12 +83,12 @@ module.exports.dislikeCard = (req, res, next) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new ValidationError('Невалидный id'));
+        return next(new ValidationError('Невалидный id'));
       }
       if (err.message === 'NotFound') {
-        next(new NotFoundError('Карточка не найдена'));
+        return next(new NotFoundError('Карточка не найдена'));
       } else {
-        next(err);
+        return next(err);
       }
     });
 };
